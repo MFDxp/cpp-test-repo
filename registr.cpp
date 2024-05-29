@@ -18,25 +18,25 @@ int main() {
     string slovo;
     vector<string> slova;
     getline(cin, stroka_vvoda);
-    bool first = true;
+    bool first = true; // это чтобы что?
     for(const char& c : stroka_vvoda){
         
-        if (first){
+        if (first){ // не лишнее ли?
             first = false;
             continue;
         }
-        if (slovo.size() == 0 && c == ' '){
+        if (slovo.size() == 0 && c == ' '){ // перемудрил
             continue;
         }
         if (c != ' '){
             slovo += c;
         }
         if (c == ' '){
-            slova.push_back(slovo);
+            slova.push_back(slovo); // подумай как обойтись условиями со строк 31 - 37, мб доп проверочку какую и все)
             slovo.clear();
         }
     }
-    slova.push_back(slovo);
+    slova.push_back(slovo); // всегда ли?
     sort(slova.begin(), slova.end(), 
          [](const string& left, const string& right) {
             return ToLowerCase(left) < ToLowerCase(right);
