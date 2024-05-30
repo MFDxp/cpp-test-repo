@@ -50,31 +50,23 @@ struct Document {
 class SearchServer {
 public:
     
-    void DeleteScam(const string& text){
+    string DeleteScam(const string& text) const {
         string word;
         bool kill = false;
         for(char c : text){
-        if(c == '-'){
-            kill = true;
-        }
-        if(c == ' ' && kill){
-            stop_words_.insert(word);
-            word.clear();
-        }
-            if (c == ' '){
-                word.clear();;
+            if(c == '-'){
+                kill = true;
             }
-            if(c != ' '){
-                word =+ c;
+            if (c == ' ' && kill){
+                kill = false;
+            } else if (c == ' '){
+                word += ' ';
             }
-        
+            if(!kill){
+                word += c;
+            }
         }
-        if (kill){
-            stop_words_.insert(word);
-            word.clear();
-    } else {
-            word.clear();
-        }
+        return word;
         }
     
     void SetStopWords(const string& text) {
@@ -84,7 +76,6 @@ public:
     }
 
     void AddDocument(int document_id, const string& document) {
-        DeleteScam(document);
         const vector<string> words = SplitIntoWordsNoStop(document);
         documents_.push_back({document_id, words});
     }
@@ -129,7 +120,8 @@ private:
 
     set<string> ParseQuery(const string& text) const {
         set<string> query_words;
-        for (const string& word : SplitIntoWordsNoStop(text)) {
+        string slova = DeleteScam(text);
+        for (const string& word : SplitIntoWordsNoStop(slova)) {
             query_words.insert(word);
         }
         return query_words;
