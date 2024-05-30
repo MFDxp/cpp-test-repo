@@ -58,7 +58,6 @@ public:
             kill = true;
         }
         if(c == ' ' && kill){
-            word.substr(1);
             stop_words_.insert(word);
             word.clear();
         }
