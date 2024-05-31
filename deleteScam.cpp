@@ -22,6 +22,11 @@ int ReadLineWithNumber() {
     return result;
 }
 
+struct Query{
+    string plus_word;
+    vector<string> scam_word;
+};
+
 vector<string> SplitIntoWords(const string& text) {
     vector<string> words;
     string word;
@@ -50,8 +55,9 @@ struct Document {
 class SearchServer {
 public:
     
-    string DeleteScam(const string& text) const {
-        string word;
+    Query DeleteScam(const string& text) const {
+        Query word;
+        string scam;
         bool kill = false;
         for(char c : text){
             if(c == '-'){
@@ -59,10 +65,17 @@ public:
             }
             if (c == ' ' && kill){
                 kill = false;
+                word.scam_word.push_back(scam);
+            }
+            if (kill){
+                scam += c;
             }
             if(!kill){
-                word += c;
+                word.plus_word += c;
             }
+        }
+        if(kill){
+            word.scam_word.push_back(scam);
         }
         return word;
         }
@@ -92,6 +105,12 @@ public:
         return matched_documents;
     }
 
+    void ScamWords(vector<string> text){
+        for (string x : text){
+            scam_word_.insert(x);
+        }
+    }
+
 private:
     struct DocumentContent {
         int id = 0;
@@ -102,9 +121,13 @@ private:
 
     set<string> stop_words_;
 
+    set<string> scam_word_;
+
     bool IsStopWord(const string& word) const {
         return stop_words_.count(word) > 0;
     }
+
+    
 
     vector<string> SplitIntoWordsNoStop(const string& text) const {
         vector<string> words;
@@ -118,8 +141,9 @@ private:
 
     set<string> ParseQuery(const string& text) const {
         set<string> query_words;
-        string slova = DeleteScam(text);
-        for (const string& word : SplitIntoWordsNoStop(slova)) {
+        Query slova = DeleteScam(text);
+        ScamWords(slova.scam_word);
+        for (const string& word : SplitIntoWordsNoStop(slova.plus_word)) {
             query_words.insert(word);
         }
         return query_words;
