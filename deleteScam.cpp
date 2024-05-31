@@ -59,8 +59,6 @@ public:
             }
             if (c == ' ' && kill){
                 kill = false;
-            } else if (c == ' '){
-                word += ' ';
             }
             if(!kill){
                 word += c;
