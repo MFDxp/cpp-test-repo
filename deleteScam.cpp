@@ -140,6 +140,7 @@ private:
         
         return doc_to_rel;
     }
+};
 
 SearchServer CreateSearchServer() {
     SearchServer search_server;
