@@ -125,16 +125,16 @@ private:
         //id and rel
         vector<Document> doc_to_rel;
             for (const auto& [key, vel] : word_to_documents_freqs_) {
+                double idf = log(static_cast<double>(document_count_)/vel.size());
+                for(const auto& [id, rel] : vel){
                 if(query.minus_words.count(key)){
-                    for(const auto& [id, rel] : vel){
                         if(document_to_relevance.count(id)){
                         document_to_relevance.erase(id);
                         }
                     }
-            }
+            
                 if(query.plus_words.count(key)){
-                    for(const auto& [id, rel] : vel){
-                        document_to_relevance[id] += log(static_cast<double>(document_count_)/vel.size())*vel.at(id);
+                        document_to_relevance[id] += idf*vel.at(id);
                 }
             }
             }
