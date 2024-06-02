@@ -134,7 +134,7 @@ private:
             }
                 if(query.plus_words.count(key)){
                     for(const auto& [id, rel] : vel){
-                        document_to_relevance[id] += log(static_cast<double>(document_count_)/vel.size())*word_to_documents_freqs_.at([key][id]);
+                        document_to_relevance[id] += log(static_cast<double>(document_count_)/vel.size())*vel.at(id);
                 }
             }
             }
@@ -146,7 +146,6 @@ private:
         return doc_to_rel;
     }
 };
-
 
 SearchServer CreateSearchServer() {
     SearchServer search_server;
