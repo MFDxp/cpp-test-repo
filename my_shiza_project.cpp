@@ -55,7 +55,7 @@ public:
         const vector<string> words = SplitIntoWordsNoStop(document);
         double one_TF = 1.0/words.size();
         ++document_count_;
-        for(string x : words){
+        for(const string& x : words){
             word_to_documents_freqs_[x][document_id] += one_TF;
         }
     }
@@ -123,21 +123,25 @@ private:
     vector<Document> FindAllDocuments(const Query& query) const {
         map <int, double> document_to_relevance;
         //id and rel
-        vector<Document> doc_to_rel;
-            for (const auto& [key, vel] : word_to_documents_freqs_) {
-                double idf = log(static_cast<double>(document_count_)/vel.size());
-                for(const auto& [id, rel] : vel){
-                if(query.minus_words.count(key)){
-                        if(document_to_relevance.count(id)){
-                        document_to_relevance.erase(id);
-                        }
+        vector<Document> doc_to_rel;                
+                for(const auto& word : query.plus_words){
+                    if(word_to_documents_freqs_.count(word) == 0){
+                        continue;
                     }
-            
-                if(query.plus_words.count(key)){
-                        document_to_relevance[id] += idf*vel.at(id);
+                    double idf = log(static_cast<double>(document_count_)/word_to_documents_freqs_.at(word).size());
+                    for(const auto& [id, vel] : word_to_documents_freqs_.at(word)){
+                        document_to_relevance[id] += idf*word_to_documents_freqs_.at(word).at(id);
+                }
+                for(const auto& word : query.minus_words){
+                    if(word_to_documents_freqs_.count(word) == 0){
+                        continue;
+                    }
+                    for(const auto& [key, vel] : word_to_documents_freqs_.at(word)){
+                        document_to_relevance.erase(key);
+                        }           
                 }
             }
-            }
+            
             for(const auto& [z, y] : document_to_relevance){
                     Document x = {z, y};
                     doc_to_rel.push_back(x);
